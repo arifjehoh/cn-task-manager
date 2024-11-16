@@ -1,3 +1,13 @@
 spring:
   application:
     name: taskmanager
+  jpa:
+    database-platform: org.hibernate.community.dialect.SQLiteDialect # https://github.com/hibernate/hibernate-orm/blob/main/hibernate-community-dialects/src/main/java/org/hibernate/community/dialect/SQLiteDialect.java
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+  datasource:
+    driver-class-name: org.sqlite.JDBC
+    url: jdbc:sqlite:memory:taskmanager?cache=shared
+    username: sqlite
+    password: sqlite
