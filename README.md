@@ -25,3 +25,32 @@ A task manager app where users can create, assign, and track task with deadlines
 3. Phase 3: Decouple into Services
 4. Phase 4: Add Observability and Scalability
 5. Phase 5: Fully Cloud-Native with CNCF Tools, [Cloud-Native Computing Foundation](https://www.cncf.io/)
+
+
+
+# Development
+
+## Local
+
+### Backend
+#### Requirements
+1. Java 23
+2. Optional, gradle
+
+#### Run
+With `gradlew` located in backend directory.
+```bash
+cd backend
+./gradlew bootRun
+```
+
+### Frontend
+#### Requirements
+1. Deno, [download here](https://deno.com/)
+
+#### Run
+1. Deno comes with node and npm.
+```bash
+cd frontend
+deno run dev
+```
