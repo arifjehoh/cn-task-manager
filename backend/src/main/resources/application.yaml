@@ -8,6 +8,6 @@ spring:
     show-sql: true
   datasource:
     driver-class-name: org.sqlite.JDBC
-    url: jdbc:sqlite:memory:taskmanager?cache=shared
+    url: jdbc:sqlite:../database/taskmanager.sqlite3
     username: sqlite
     password: sqlite
