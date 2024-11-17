@@ -6,6 +6,7 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +15,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
@@ -24,16 +27,19 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class WebSecurityConfiguration {
     private final RsaKeyProperties rsaKeys;
+    private final int passwordStrength;
 
-    public WebSecurityConfiguration(RsaKeyProperties rsaKeys) {
+    public WebSecurityConfiguration(RsaKeyProperties rsaKeys,
+                                    @Value("${spring.security.password-strength}") int passwordStrength) {
         this.rsaKeys = rsaKeys;
+        this.passwordStrength = passwordStrength;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
                    .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                   .authorizeHttpRequests((authorize) -> authorize.requestMatchers("/api/auth/login")
+                   .authorizeHttpRequests((authorize) -> authorize.requestMatchers("/api/auth/**")
                                                                   .permitAll())
                    .authorizeHttpRequests((authorize) -> authorize.requestMatchers("/api/v1/**")
                                                                   .authenticated())
@@ -63,6 +69,11 @@ public class WebSecurityConfiguration {
     public JwtDecoder jwtDecoder() {
         return NimbusJwtDecoder.withPublicKey(rsaKeys.publicKey())
                                .build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(passwordStrength);
     }
 
 }

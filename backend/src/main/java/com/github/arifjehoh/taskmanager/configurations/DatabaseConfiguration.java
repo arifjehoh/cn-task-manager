@@ -2,6 +2,7 @@ package com.github.arifjehoh.taskmanager.configurations;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
@@ -16,6 +17,7 @@ public class DatabaseConfiguration {
     }
 
     @Bean
+    @Primary
     public DataSource dataSource() {
         final DriverManagerDataSource dataSource = new DriverManagerDataSource();
         String driverClassName = env.getProperty("spring.datasource.driver-class-name");

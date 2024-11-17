@@ -12,6 +12,7 @@ spring:
     username: sqlite
     password: sqlite
   security:
+    password-strength: 10
     oauth2:
       resourceserver:
         jwt:
