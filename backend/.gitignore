@@ -146,3 +146,6 @@ gradle-app.setting
 
 # SQLite Database
 /memory:taskmanager?cache=shared
+
+# Certs
+*.pem
