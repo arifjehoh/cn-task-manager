@@ -11,3 +11,12 @@ spring:
     url: jdbc:sqlite:../database/taskmanager.sqlite3
     username: sqlite
     password: sqlite
+  security:
+    password-strength: 10
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/auth/realms/taskmanager
+rsa:
+  private-key: classpath:certs/private.pem
+  public-key: classpath:certs/public.pem
