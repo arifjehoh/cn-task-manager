@@ -39,6 +39,10 @@ public class WebSecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
                    .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                   .authorizeHttpRequests((authorize) -> authorize.requestMatchers("/ping")
+                                                                  .permitAll())
+                   .authorizeHttpRequests((authorize) -> authorize.requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**")
+                                                                  .permitAll())
                    .authorizeHttpRequests((authorize) -> authorize.requestMatchers("/api/auth/**")
                                                                   .permitAll())
                    .authorizeHttpRequests((authorize) -> authorize.requestMatchers("/api/v1/**")
