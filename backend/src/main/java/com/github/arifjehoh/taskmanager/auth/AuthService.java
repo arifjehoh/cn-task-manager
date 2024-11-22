@@ -28,6 +28,9 @@ public class AuthService {
         if (password.length() < 8) {
             throw new IllegalArgumentException("Password is too short");
         }
+        if (username.equalsIgnoreCase(password)) {
+            throw new IllegalArgumentException("Username and password cannot be the same");
+        }
         repository.findByUsername(username)
                   .ifPresent(user -> {
                       if (!passwordEncoder.matches(password, user.getPassword())) {
