@@ -7,10 +7,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
-    private static final String ROLE_MEMBER = "MEMBER";
     public static final String ROLE_ADMIN = "ADMIN";
     public static final String ROLE_MANAGER = "MANAGER";
-
+    private static final String ROLE_MEMBER = "MEMBER";
     private final AuthRepository repository;
     private final PasswordEncoder passwordEncoder;
 
@@ -50,7 +49,8 @@ public class AuthService {
                   .ifPresent(_ -> {
                       throw new IllegalArgumentException("User already exists");
                   });
-        return repository.save(user).toDTO();
+        return repository.save(user)
+                         .toDTO();
     }
 
     public UserDTO findByUsername(String username) {
