@@ -1,4 +1,4 @@
 package com.github.arifjehoh.taskmanager.auth;
 
-public record UserDTO(String username, String authority) {
+public record UserDTO(Long id, String username, String authority) {
 }

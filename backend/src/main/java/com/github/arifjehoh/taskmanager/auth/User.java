@@ -57,6 +57,6 @@ public class User {
     }
 
     public UserDTO toDTO() {
-        return new UserDTO(username, authority);
+        return new UserDTO(id, username, authority);
     }
 }

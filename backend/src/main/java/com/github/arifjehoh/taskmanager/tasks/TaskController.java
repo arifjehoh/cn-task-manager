@@ -1,6 +1,8 @@
 package com.github.arifjehoh.taskmanager.tasks;
 
+import com.github.arifjehoh.taskmanager.auth.AuthService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -65,7 +67,7 @@ public class TaskController {
         }
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping(value = "/{id}", name = "updateTaskPartially")
     public Task updateTaskPartially(Principal principal,
                                     @PathVariable(value = "id") Long id,
                                     @RequestParam(value = "title", required = false) String title,
@@ -76,6 +78,17 @@ public class TaskController {
         TaskForm form = new TaskForm(title, description, status, priority, dueDate);
         String currentUser = principal.getName();
         return service.patch(id, form, currentUser);
+    }
+
+    @PatchMapping(value = "/{id}/assign", name = "assignTask")
+    public Task assignTask(@PathVariable(value = "id") Long id,
+                           @RequestBody TaskAssignmentForm form) {
+        form.verify();
+        try {
+            return service.assign(id, form);
+        } catch (UsernameNotFoundException e) {
+            throw new IllegalArgumentException("Assigned user not found");
+        }
     }
 
     @DeleteMapping("/{id}")
