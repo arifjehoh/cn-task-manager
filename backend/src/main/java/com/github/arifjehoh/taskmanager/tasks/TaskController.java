@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
@@ -33,10 +34,10 @@ public class TaskController {
     @PostMapping
     public Task createTask(
             Principal principal,
-            @RequestBody TaskForm task) {
+            @RequestBody TaskForm form) {
         try {
             String currentUser = principal.getName();
-            return service.save(task, currentUser);
+            return service.save(form, currentUser);
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid form entry, due to: %s".formatted(e.getMessage()));
         } catch (Exception e) {
@@ -50,9 +51,13 @@ public class TaskController {
     }
 
     @PutMapping("/{id}")
-    public Task updateTask(@PathVariable(value = "id") Long id, @RequestBody TaskForm form) {
+    public Task updateTask(Principal principal,
+                           @PathVariable(value = "id") Long id,
+                           @RequestBody TaskForm form) {
         try {
-            return service.update(id, form);
+            String currentUser = principal.getName();
+            form.verify();
+            return service.update(id, form, currentUser);
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid form entry, due to: %s".formatted(e.getMessage()));
         } catch (Exception e) {
@@ -61,13 +66,21 @@ public class TaskController {
     }
 
     @PatchMapping("/{id}")
-    public Object updateTaskPartially(@PathVariable(value = "id") Long id) {
-        return new Object();
+    public Task updateTaskPartially(Principal principal,
+                                    @PathVariable(value = "id") Long id,
+                                    @RequestParam(value = "title", required = false) String title,
+                                    @RequestParam(value = "description", required = false) String description,
+                                    @RequestParam(value = "status", required = false) String status,
+                                    @RequestParam(value = "priority", required = false) String priority,
+                                    @RequestParam(value = "dueDate", required = false) String dueDate) {
+        TaskForm form = new TaskForm(title, description, status, priority, dueDate);
+        String currentUser = principal.getName();
+        return service.patch(id, form, currentUser);
     }
 
     @DeleteMapping("/{id}")
-    public Object deleteTask(@PathVariable(value = "id") Long id) {
-        return new Object();
+    public Task deleteTask(@PathVariable(value = "id") Long id) {
+        return service.delete(id);
     }
 
 }

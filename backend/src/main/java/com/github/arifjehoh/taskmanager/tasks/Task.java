@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Entity(name = "tasks")
 public class Task {
@@ -141,7 +142,19 @@ public class Task {
         this.updatedBy = updatedBy;
     }
 
-    public Task update(TaskForm form) {
-        return new Task(this.id, form.title(), form.description(), form.status(), form.priority(), form.getDueDate(), this.createdBy, this.updatedBy);
+    public Task update(TaskForm form, String currentUser) {
+        return new Task(this.id,
+                Optional.ofNullable(form.title())
+                        .orElse(this.title),
+                Optional.ofNullable(form.description())
+                        .orElse(this.description),
+                Optional.ofNullable(form.status())
+                        .orElse(this.status),
+                Optional.ofNullable(form.priority())
+                        .orElse(this.priority),
+                Optional.ofNullable(form.getDueDate())
+                        .orElse(this.dueDate),
+                this.createdBy,
+                currentUser);
     }
 }

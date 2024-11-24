@@ -27,7 +27,7 @@ public class TaskService {
                          .orElseThrow(() -> new IllegalArgumentException("Task not found"));
     }
 
-    public Task update(Long id, TaskForm form) {
+    public Task update(Long id, TaskForm form, String currentUser) {
         if (id == null) {
             throw new IllegalArgumentException("Task ID is required");
         }
@@ -36,12 +36,38 @@ public class TaskService {
         }
         form.verify();
         Task task = repository.findById(id)
-                              .map(data -> data.update(form))
+                              .map(data -> data.update(form, currentUser))
                               .orElseThrow(() -> new IllegalArgumentException("Task not found"));
         return save(task);
     }
 
     private Task save(Task task) {
         return repository.save(task);
+    }
+
+    public Task patch(Long id, TaskForm form, String currentUser) {
+        if (id == null) {
+            throw new IllegalArgumentException("Task ID is required");
+        }
+        if (id <= 0) {
+            throw new IllegalArgumentException("Invalid Task ID");
+        }
+        Task task = repository.findById(id)
+                              .map(data -> data.update(form, currentUser))
+                              .orElseThrow(() -> new IllegalArgumentException("Task not found"));
+        return save(task);
+    }
+
+    public Task delete(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Task ID is required");
+        }
+        if (id <= 0) {
+            throw new IllegalArgumentException("Invalid Task ID");
+        }
+        Task task = repository.findById(id)
+                              .orElseThrow(() -> new IllegalArgumentException("Task not found"));
+        repository.delete(task);
+        return task;
     }
 }
