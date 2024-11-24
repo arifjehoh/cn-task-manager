@@ -45,8 +45,8 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-    public Object getTask(@PathVariable(value = "id") Long id) {
-        return new Object();
+    public Task getTask(@PathVariable(value = "id") Long id) {
+        return service.findById(id);
     }
 
     @PutMapping("/{id}")

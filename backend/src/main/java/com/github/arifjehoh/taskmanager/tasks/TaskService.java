@@ -21,4 +21,8 @@ public class TaskService {
         Task task = new Task(form, createdBy, null);
         return repository.save(task);
     }
+
+    public Task findById(Long id) {
+        return repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Task not found"));
+    }
 }
