@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Map;
-
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 @RestController
@@ -17,15 +15,19 @@ public class AuthController {
     private final JwtUtils jwtUtils;
     private final AuthService service;
 
-    public AuthController(JwtUtils jwtUtils, AuthService service) {
+    public AuthController(JwtUtils jwtUtils,
+                          AuthService service) {
         this.jwtUtils = jwtUtils;
         this.service = service;
     }
 
+    public record LoginRequest(String username, String password) {
+    }
+
     @PostMapping("/signin")
-    public String login(@RequestBody Map<String, String> body) {
-        String username = body.get("username");
-        String password = body.get("password");
+    public String login(@RequestBody LoginRequest body) {
+        String username = body.username();
+        String password = body.password();
         try {
             service.validateUser(username, password);
             UserDTO user = service.findByUsername(username);
@@ -36,9 +38,9 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public String signup(@RequestBody Map<String, String> body) {
-        String username = body.get("username");
-        String password = body.get("password");
+    public String signup(@RequestBody LoginRequest body) {
+        String username = body.username();
+        String password = body.password();
         try {
             UserDTO user = service.save(username, password);
             return jwtUtils.generateToken(user);

@@ -7,10 +7,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
-    private static final String ROLE_MEMBER = "MEMBER";
     public static final String ROLE_ADMIN = "ADMIN";
     public static final String ROLE_MANAGER = "MANAGER";
-
+    private static final String ROLE_MEMBER = "MEMBER";
     private final AuthRepository repository;
     private final PasswordEncoder passwordEncoder;
 
@@ -28,6 +27,9 @@ public class AuthService {
         }
         if (password.length() < 8) {
             throw new IllegalArgumentException("Password is too short");
+        }
+        if (username.equalsIgnoreCase(password)) {
+            throw new IllegalArgumentException("Username and password cannot be the same");
         }
         repository.findByUsername(username)
                   .ifPresent(user -> {
@@ -50,7 +52,8 @@ public class AuthService {
                   .ifPresent(_ -> {
                       throw new IllegalArgumentException("User already exists");
                   });
-        return repository.save(user).toDTO();
+        return repository.save(user)
+                         .toDTO();
     }
 
     public UserDTO findByUsername(String username) {
