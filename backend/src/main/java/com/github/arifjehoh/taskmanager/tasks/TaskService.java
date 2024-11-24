@@ -5,17 +5,16 @@ import com.github.arifjehoh.taskmanager.auth.UserDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TaskService {
     private final AuthService authService;
     private final TaskRepository taskRepository;
-    private final TaskAssignmentRepository taskAssignmentRepository;
 
-    public TaskService(AuthService authService, TaskRepository taskRepository, TaskAssignmentRepository taskAssignmentRepository) {
+    public TaskService(AuthService authService, TaskRepository taskRepository) {
         this.authService = authService;
         this.taskRepository = taskRepository;
-        this.taskAssignmentRepository = taskAssignmentRepository;
     }
 
     public List<Task> findAll() {
@@ -42,7 +41,7 @@ public class TaskService {
         }
         form.verify();
         Task task = taskRepository.findById(id)
-                                  .map(data -> data.update(form, currentUser))
+                                  .map(data -> data.update(form, currentUser, null))
                                   .orElseThrow(() -> new IllegalArgumentException("Task not found"));
         return save(task);
     }
@@ -51,15 +50,16 @@ public class TaskService {
         return taskRepository.save(task);
     }
 
-    public Task patch(Long id, TaskForm form, String currentUser) {
+    public Task patch(Long id, TaskForm form, String assignee, String currentUser) {
         if (id == null) {
             throw new IllegalArgumentException("Task ID is required");
         }
         if (id <= 0) {
             throw new IllegalArgumentException("Invalid Task ID");
         }
+        UserDTO assigned = Optional.ofNullable(assignee).map(authService::findByUsername).orElse(new UserDTO(null, null, null));
         Task task = taskRepository.findById(id)
-                                  .map(data -> data.update(form, currentUser))
+                                  .map(data -> data.update(form, currentUser, assigned.id()))
                                   .orElseThrow(() -> new IllegalArgumentException("Task not found"));
         return save(task);
     }
@@ -75,22 +75,5 @@ public class TaskService {
                                   .orElseThrow(() -> new IllegalArgumentException("Task not found"));
         taskRepository.delete(task);
         return task;
-    }
-
-    public Task assign(Long id, TaskAssignmentForm form) {
-        if (id == null) {
-            throw new IllegalArgumentException("Task ID is required");
-        }
-        if (id <= 0) {
-            throw new IllegalArgumentException("Invalid Task ID");
-        }
-        UserDTO assignee = authService.findByUsername(form.assignee());
-        boolean exists = taskRepository.existsById(id);
-        if (!exists) {
-            throw new IllegalArgumentException("Task not found");
-        }
-        TaskAssignment taskAssignment = new TaskAssignment(id, assignee);
-        taskAssignmentRepository.save(taskAssignment);
-        return findById(id);
     }
 }

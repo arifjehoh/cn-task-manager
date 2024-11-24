@@ -33,6 +33,8 @@ public class Task {
     private Timestamp updatedAt;
     @Column(name = "UPDATED_BY")
     private String updatedBy;
+    @Column(name = "ASSIGNEE_USER_ID")
+    private Long assigneeId;
 
     public Task() {
     }
@@ -44,6 +46,7 @@ public class Task {
             String status,
             String priority,
             LocalDateTime dueDate,
+            Long assigneeId,
             String createdBy,
             String updatedBy) {
         this.id = id;
@@ -52,6 +55,7 @@ public class Task {
         this.status = status;
         this.priority = priority;
         this.dueDate = dueDate;
+        this.assigneeId = assigneeId;
         this.createdAt = Timestamp.valueOf(LocalDateTime.now());
         this.createdBy = createdBy;
         this.updatedAt = Timestamp.valueOf(LocalDateTime.now());
@@ -59,7 +63,7 @@ public class Task {
     }
 
     public Task(TaskForm form, String createdBy, String updatedBy) {
-        this(null, form.title(), form.description(), form.status(), form.priority(), form.getDueDate(), createdBy, updatedBy);
+        this(null, form.title(), form.description(), form.status(), form.priority(), form.getDueDate(),null, createdBy, updatedBy);
     }
 
     public Long getId() {
@@ -142,7 +146,15 @@ public class Task {
         this.updatedBy = updatedBy;
     }
 
-    public Task update(TaskForm form, String currentUser) {
+    public Long getAssigneeId() {
+        return assigneeId;
+    }
+
+    public void setAssigneeId(Long assigneeId) {
+        this.assigneeId = assigneeId;
+    }
+
+    public Task update(TaskForm form, String currentUser, Long assignee) {
         return new Task(this.id,
                 Optional.ofNullable(form.title())
                         .orElse(this.title),
@@ -154,6 +166,8 @@ public class Task {
                         .orElse(this.priority),
                 Optional.ofNullable(form.getDueDate())
                         .orElse(this.dueDate),
+                Optional.ofNullable(assignee)
+                        .orElse(this.assigneeId),
                 this.createdBy,
                 currentUser);
     }
