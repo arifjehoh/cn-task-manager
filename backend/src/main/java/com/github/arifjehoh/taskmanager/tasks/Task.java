@@ -140,4 +140,8 @@ public class Task {
     public void setUpdatedBy(String updatedBy) {
         this.updatedBy = updatedBy;
     }
+
+    public Task update(TaskForm form) {
+        return new Task(this.id, form.title(), form.description(), form.status(), form.priority(), form.getDueDate(), this.createdBy, this.updatedBy);
+    }
 }

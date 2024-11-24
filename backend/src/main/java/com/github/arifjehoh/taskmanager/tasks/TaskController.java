@@ -50,8 +50,14 @@ public class TaskController {
     }
 
     @PutMapping("/{id}")
-    public Object updateTask(@PathVariable(value = "id") Long id) {
-        return new Object();
+    public Task updateTask(@PathVariable(value = "id") Long id, @RequestBody TaskForm form) {
+        try {
+            return service.update(id, form);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid form entry, due to: %s".formatted(e.getMessage()));
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Failed to update task, exception is not handled");
+        }
     }
 
     @PatchMapping("/{id}")
