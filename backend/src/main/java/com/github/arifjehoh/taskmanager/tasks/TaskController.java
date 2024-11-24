@@ -1,6 +1,5 @@
 package com.github.arifjehoh.taskmanager.tasks;
 
-import com.github.arifjehoh.taskmanager.auth.AuthService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.DeleteMapping;

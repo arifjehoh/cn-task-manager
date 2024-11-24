@@ -24,28 +24,4 @@ public class TaskAssignment {
         this.taskId = taskId;
         this.assignee = user.id();
     }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getTaskId() {
-        return taskId;
-    }
-
-    public void setTaskId(Long taskId) {
-        this.taskId = taskId;
-    }
-
-    public Long getAssignee() {
-        return assignee;
-    }
-
-    public void setAssignee(Long assignee) {
-        this.assignee = assignee;
-    }
 }
